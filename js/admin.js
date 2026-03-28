@@ -189,6 +189,25 @@ async function loadQuestions() {
     const r = await callAPI('getQuestions', { year });
     if (!r.success) throw new Error(r.error);
     questionsData = r.data || [];
+    
+    // อัพเดท dropdown กรองส่วน (Section Filter)
+    const qSectionSelect = document.getElementById('qSectionSelect');
+    if (qSectionSelect) {
+      const currentVal = qSectionSelect.value;
+      const uniqueSections = [...new Set(questionsData.map(q => q.section))].sort();
+      let h = '<option value="all">ทั้งหมด</option>';
+      uniqueSections.forEach(s => {
+        let label = s;
+        if (s === 'open') label = 'คำถามปลายเปิด';
+        else if (!label.includes('ส่วนที่') && !label.includes('ด้าน')) label = `ส่วนที่ ${s}`;
+        h += `<option value="${s}">${label}</option>`;
+      });
+      qSectionSelect.innerHTML = h;
+      if (uniqueSections.includes(currentVal) || currentVal === 'all') {
+        qSectionSelect.value = currentVal;
+      }
+    }
+
     renderQuestions();
   } catch (e) { showToast(e.message, 'error'); }
 }

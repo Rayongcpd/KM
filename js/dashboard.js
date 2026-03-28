@@ -86,29 +86,57 @@ function renderDemoCharts(demo) {
 
 function renderSectionTables(sections) {
   if (!sections) return;
-  ['2.1','2.2','2.3','2.4'].forEach((k, idx) => {
-    const ids = ['table21Container','table22Container','table23Container','table24Container'];
-    const sec = sections[k], el = document.getElementById(ids[idx]);
-    if (!el || !sec?.questions?.length) { if(el) el.innerHTML='<div class="empty-state"><p>ยังไม่มีข้อมูล</p></div>'; return; }
-    let h = '<table class="summary-table"><thead><tr><th>ข้อคำถาม</th><th>5 มากที่สุด</th><th>4 มาก</th><th>3 ปานกลาง</th><th>2 น้อย</th><th>1 น้อยที่สุด</th><th>ค่าเฉลี่ย</th></tr></thead><tbody>';
-    sec.questions.forEach((q,i) => {
-      const tot = q.counts.reduce((a,b)=>a+b,0);
-      const p = q.counts.map(c => tot>0?((c/tot)*100).toFixed(1):'0.0');
-      const a = q.avg||0, cls = a>=4.5?'avg-excellent':a>=3.5?'avg-good':a>=2.5?'avg-fair':'avg-poor';
-      h += `<tr><td>${i+1}. ${q.text}</td>${p.map(v=>`<td>${v}%</td>`).join('')}<td><span class="avg-badge ${cls}">${a.toFixed(2)}</span></td></tr>`;
-    });
-    const sa = sec.avg||0, sc = sa>=4.5?'avg-excellent':sa>=3.5?'avg-good':sa>=2.5?'avg-fair':'avg-poor';
-    h += `<tr style="font-weight:700;background:var(--navy-50);"><td>ค่าเฉลี่ยรวม</td><td colspan="5"></td><td><span class="avg-badge ${sc}">${sa.toFixed(2)}</span></td></tr></tbody></table>`;
-    el.innerHTML = h;
+  const el = document.getElementById('dynamicSectionTables');
+  if (!el) return;
+  
+  let h = '';
+  const icons = ['fa-eye', 'fa-cogs', 'fa-shapes', 'fa-bullseye', 'fa-star', 'fa-check-circle', 'fa-flag'];
+  let idx = 0;
+  
+  Object.keys(sections).sort().forEach(k => {
+    const sec = sections[k];
+    const icon = icons[idx % icons.length];
+    idx++;
+    
+    let title = sec.title;
+    if (!title.includes('ส่วนที่')) title = `ส่วนที่ ${title}`;
+    
+    h += `<div class="card" id="card-section-${k.replace(/\./g, '-')}">
+      <div class="card-header">
+        <div class="icon icon-navy"><i class="fas ${icon}"></i></div>
+        <div><h2>${title}</h2></div>
+      </div>
+      <div>`;
+      
+    if (!sec?.questions?.length) {
+      h += '<div class="empty-state"><p>ยังไม่มีข้อมูล</p></div>';
+    } else {
+      h += '<table class="summary-table"><thead><tr><th>ข้อคำถาม</th><th>5 มากที่สุด</th><th>4 มาก</th><th>3 ปานกลาง</th><th>2 น้อย</th><th>1 น้อยที่สุด</th><th>ค่าเฉลี่ย</th></tr></thead><tbody>';
+      sec.questions.forEach((q,i) => {
+        const tot = q.counts.reduce((a,b)=>a+b,0);
+        const p = q.counts.map(c => tot>0?((c/tot)*100).toFixed(1):'0.0');
+        const a = q.avg||0, cls = a>=4.5?'avg-excellent':a>=3.5?'avg-good':a>=2.5?'avg-fair':'avg-poor';
+        h += `<tr><td>${i+1}. ${q.text}</td>${p.map(v=>`<td>${v}%</td>`).join('')}<td><span class="avg-badge ${cls}">${a.toFixed(2)}</span></td></tr>`;
+      });
+      const sa = sec.avg||0, sc = sa>=4.5?'avg-excellent':sa>=3.5?'avg-good':sa>=2.5?'avg-fair':'avg-poor';
+      h += `<tr style="font-weight:700;background:var(--navy-50);"><td>ค่าเฉลี่ยรวม</td><td colspan="5"></td><td><span class="avg-badge ${sc}">${sa.toFixed(2)}</span></td></tr></tbody></table>`;
+    }
+    h += '</div></div>';
   });
+  
+  el.innerHTML = h;
 }
 
 function renderSectionAvgChart(sections) {
   if (!sections) return;
   destroyChart('chartSectionAvg');
-  const names = {'2.1':'ด้านการรับรู้','2.2':'ด้านการใช้ประโยชน์','2.3':'ด้านรูปแบบ','2.4':'ด้านผลสัมฤทธิ์'};
-  const labels=[], vals=[], colors=['#3b82f6','#8b5cf6','#10b981','#f59e0b'], bg=[];
-  Object.keys(names).forEach((k,i) => { if(sections[k]){ labels.push(names[k]); vals.push(sections[k].avg||0); bg.push(colors[i]); }});
+  const labels=[], vals=[], colors=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#ec4899','#14b8a6'], bg=[];
+  Object.keys(sections).sort().forEach((k,i) => {
+    let title = sections[k].title;
+    labels.push(title.length > 20 ? title.substring(0, 20) + '...' : title); 
+    vals.push(sections[k].avg||0); 
+    bg.push(colors[i % colors.length]); 
+  });
   const ctx = document.getElementById('chartSectionAvg')?.getContext('2d');
   if (!ctx) return;
   chartInstances['chartSectionAvg'] = new Chart(ctx, { type:'bar', data:{ labels, datasets:[{ label:'ค่าเฉลี่ย', data:vals, backgroundColor:bg.map(c=>c+'cc'), borderColor:bg, borderWidth:2, borderRadius:8, barPercentage:0.6 }] },
@@ -130,11 +158,14 @@ function renderOpenEnded(data) {
 function exportCSV() {
   if (!currentSummary?.sections) { showToast('ไม่มีข้อมูล','warning'); return; }
   let csv='\uFEFF'+'ส่วน,ข้อคำถาม,5-มากที่สุด(%),4-มาก(%),3-ปานกลาง(%),2-น้อย(%),1-น้อยที่สุด(%),ค่าเฉลี่ย\n';
-  const nm={'2.1':'การรับรู้','2.2':'การใช้ประโยชน์','2.3':'รูปแบบ','2.4':'ผลสัมฤทธิ์'};
-  Object.keys(nm).forEach(k => { const s=currentSummary.sections[k]; if(!s?.questions) return; s.questions.forEach(q => {
-    const t=q.counts.reduce((a,b)=>a+b,0), p=q.counts.map(c=>t>0?((c/t)*100).toFixed(1):'0.0');
-    csv+=`"${nm[k]}","${q.text}",${p.join(',')},${(q.avg||0).toFixed(2)}\n`;
-  }); });
+  Object.keys(currentSummary.sections).sort().forEach(k => { 
+    const s = currentSummary.sections[k]; 
+    if(!s?.questions) return; 
+    s.questions.forEach(q => {
+      const t=q.counts.reduce((a,b)=>a+b,0), p=q.counts.map(c=>t>0?((c/t)*100).toFixed(1):'0.0');
+      csv+=`"${s.title}","${q.text}",${p.join(',')},${(q.avg||0).toFixed(2)}\n`;
+    }); 
+  });
   const b=new Blob([csv],{type:'text/csv;charset=utf-8;'}), l=document.createElement('a');
   l.href=URL.createObjectURL(b); l.download=`survey_${document.getElementById('yearSelect')?.value||''}.csv`; l.click();
   showToast('Export สำเร็จ','success');

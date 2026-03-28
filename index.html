@@ -129,26 +129,8 @@
         </div>
       </div>
 
-      <div class="card" id="card-section-2-1">
-        <div class="card-header">
-          <div class="icon icon-gold"><i class="fas fa-eye"></i></div><div><h2 id="section21Title">ส่วนที่ 2.1 — ด้านระดับการรับรู้นวัตกรรม</h2></div>
-        </div><div id="table21Container"></div>
-      </div>
-      <div class="card" id="card-section-2-2">
-        <div class="card-header">
-          <div class="icon icon-navy"><i class="fas fa-cogs"></i></div><div><h2 id="section22Title">ส่วนที่ 2.2 — ด้านการใช้ประโยชน์จากนวัตกรรม</h2></div>
-        </div><div id="table22Container"></div>
-      </div>
-      <div class="card" id="card-section-2-3">
-        <div class="card-header">
-          <div class="icon icon-green"><i class="fas fa-shapes"></i></div><div><h2 id="section23Title">ส่วนที่ 2.3 — ด้านรูปแบบของนวัตกรรม</h2></div>
-        </div><div id="table23Container"></div>
-      </div>
-      <div class="card" id="card-section-2-4">
-        <div class="card-header">
-          <div class="icon icon-gold"><i class="fas fa-bullseye"></i></div><div><h2 id="section24Title">ส่วนที่ 2.4 — การประเมินผลสัมฤทธิ์/ผลลัพธ์</h2></div>
-        </div><div id="table24Container"></div>
-      </div>
+      <div id="dynamicSectionTables"></div>
+
       <div class="card">
         <div class="card-header">
           <div class="icon icon-navy"><i class="fas fa-chart-bar"></i></div>
@@ -230,11 +212,6 @@
               <label for="qSectionSelect" style="margin-left:12px;"><i class="fas fa-layer-group"></i> ส่วน:</label>
               <select id="qSectionSelect">
                 <option value="all">ทั้งหมด</option>
-                <option value="2.1">2.1 — ด้านการรับรู้</option>
-                <option value="2.2">2.2 — ด้านการใช้ประโยชน์</option>
-                <option value="2.3">2.3 — ด้านรูปแบบ</option>
-                <option value="2.4">2.4 — ผลสัมฤทธิ์</option>
-                <option value="open">คำถามปลายเปิด</option>
               </select>
             </div>
             <div class="btn-group" style="margin-top:0; margin-bottom:20px;">
@@ -313,13 +290,14 @@
       <div class="modal-body">
         <div class="form-group">
           <label>ส่วน <span class="required">*</span></label>
-          <select id="inputQSection" class="form-select">
-            <option value="2.1">2.1 — ด้านการรับรู้</option>
-            <option value="2.2">2.2 — ด้านการใช้ประโยชน์</option>
-            <option value="2.3">2.3 — ด้านรูปแบบ</option>
-            <option value="2.4">2.4 — ผลสัมฤทธิ์</option>
-            <option value="open">คำถามปลายเปิด</option>
-          </select>
+          <input type="text" id="inputQSection" class="form-input" list="sectionOptions" placeholder="เลือกหรือพิมพ์ส่วนใหม่..." autocomplete="off">
+          <datalist id="sectionOptions">
+            <option value="2.1 — ด้านการรับรู้">
+            <option value="2.2 — ด้านการใช้ประโยชน์">
+            <option value="2.3 — ด้านรูปแบบ">
+            <option value="2.4 — ด้านผลสัมฤทธิ์">
+            <option value="open">
+          </datalist>
         </div>
         <div class="form-group"><label>ข้อความคำถาม <span class="required">*</span></label><textarea id="inputQText" class="form-textarea"></textarea></div>
         <div class="form-group">

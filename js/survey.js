@@ -92,13 +92,23 @@ function renderSurvey() {
   // Section 1: ข้อมูลทั่วไป (คงที่)
   container.innerHTML += renderDemographicSection();
 
-  // Section 2.1-2.4: Rating tables
-  const sectionMeta = [
-    { key: '2.1', title: 'ส่วนที่ 2.1 ความคิดเห็นเกี่ยวกับการรับรู้นวัตกรรม', icon: 'fa-eye', scaleLabel: 'ระดับความพึงพอใจ' },
-    { key: '2.2', title: 'ส่วนที่ 2.2 ความคิดเห็นเกี่ยวกับการนำนวัตกรรมไปปรับใช้ประโยชน์', icon: 'fa-cogs', scaleLabel: 'ระดับความพึงพอใจ' },
-    { key: '2.3', title: 'ส่วนที่ 2.3 ความคิดเห็นเกี่ยวกับรูปแบบของนวัตกรรม', icon: 'fa-shapes', scaleLabel: 'ระดับคุณภาพ' },
-    { key: '2.4', title: 'ส่วนที่ 2.4 การประเมินผลสัมฤทธิ์/ผลลัพธ์ตามวัตถุประสงค์ของนวัตกรรม', icon: 'fa-bullseye', scaleLabel: 'ระดับคุณภาพ' },
-  ];
+  // Section 2.x: Rating tables (Dynamic)
+  const dynamicKeys = Object.keys(sections).filter(k => k !== 'open').sort();
+  const icons = ['fa-eye', 'fa-cogs', 'fa-shapes', 'fa-bullseye', 'fa-star', 'fa-check-circle', 'fa-flag'];
+  
+  const sectionMeta = dynamicKeys.map((key, idx) => {
+    let title = key;
+    if (!title.includes('ส่วนที่')) {
+      // ถ้าไม่มีคำว่าส่วนที่ ให้เติมให้
+      title = `ส่วนที่ ${key}`;
+    }
+    return { 
+      key: key, 
+      title: title, 
+      icon: icons[idx % icons.length], 
+      scaleLabel: 'ระดับความพึงพอใจ/คุณภาพ' 
+    };
+  });
 
   sectionMeta.forEach(sm => {
     const qs = sections[sm.key] || [];
@@ -297,8 +307,8 @@ function showSection(index) {
   document.getElementById('progressBar').style.width = pct + '%';
   document.getElementById('progressPercent').textContent = pct + '%';
 
-  const sectionNames = ['ส่วนที่ 1: ข้อมูลทั่วไป', 'ส่วนที่ 2.1: การรับรู้', 'ส่วนที่ 2.2: การใช้ประโยชน์', 'ส่วนที่ 2.3: รูปแบบ', 'ส่วนที่ 2.4: ผลสัมฤทธิ์', 'ข้อเสนอแนะ'];
-  document.getElementById('progressSection').textContent = sectionNames[index] || `ส่วนที่ ${index + 1}`;
+  const h2 = allSections[index].querySelector('h2');
+  document.getElementById('progressSection').textContent = h2 ? h2.textContent : `ส่วนที่ ${index + 1}`;
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
