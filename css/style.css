@@ -616,6 +616,11 @@ body::before {
   margin-bottom: 24px;
 }
 
+.chart-row .chart-container {
+  max-width: 280px;
+  margin: 0 auto;
+}
+
 /* --- Summary Table --- */
 .summary-table {
   width: 100%;

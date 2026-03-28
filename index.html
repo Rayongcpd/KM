@@ -81,7 +81,7 @@
     <main class="container container-wide">
       <!-- Year Selector -->
       <div class="year-selector">
-        <label for="yearSelect" style="font-weight:600;"><i class="fas fa-calendar-alt"></i> ปีงบประมาณ:</label>
+        <label for="yearSelect" style="font-weight:600;"><i class="fas fa-calendar-alt"></i> รหัส/ปีงบประมาณ:</label>
         <select id="yearSelect"></select>
         <button class="btn btn-sm btn-outline" id="btnRefresh"><i class="fas fa-sync-alt"></i> รีเฟรช</button>
       </div>
@@ -197,7 +197,7 @@
       <main class="container container-wide">
         <!-- Admin Tabs -->
         <div class="admin-tabs" id="adminTabs">
-          <button class="admin-tab active" data-tab="tab-years"><i class="fas fa-calendar"></i> ปีงบประมาณ</button>
+          <button class="admin-tab active" data-tab="tab-years"><i class="fas fa-calendar"></i> รหัส/ปีงบประมาณ</button>
           <button class="admin-tab" data-tab="tab-questions"><i class="fas fa-list-ol"></i> จัดการคำถาม</button>
           <button class="admin-tab" data-tab="tab-responses"><i class="fas fa-database"></i> ข้อมูลตอบกลับ</button>
           <button class="admin-tab" data-tab="tab-settings"><i class="fas fa-cog"></i> ตั้งค่า</button>
@@ -208,10 +208,10 @@
           <div class="card">
             <div class="card-header">
               <div class="icon icon-navy"><i class="fas fa-calendar-plus"></i></div>
-              <div><h2>จัดการปีงบประมาณ</h2><p>เพิ่ม แก้ไข เปิด/ปิดปีงบประมาณ</p></div>
+              <div><h2>จัดการปีงบประมาณ</h2><p>เพิ่ม แก้ไข เปิด/ปิดรอบการประเมิน</p></div>
             </div>
             <div class="btn-group" style="margin-top:0; margin-bottom:20px;">
-              <button class="btn btn-primary btn-sm" id="btnAddYear"><i class="fas fa-plus"></i> เพิ่มปีงบประมาณ</button>
+              <button class="btn btn-primary btn-sm" id="btnAddYear"><i class="fas fa-plus"></i> เพิ่มรอบประเมิน/ปี</button>
             </div>
             <div id="yearsListContainer"><div class="empty-state"><i class="fas fa-calendar"></i><p>กำลังโหลด...</p></div></div>
           </div>
@@ -288,11 +288,11 @@
   <div class="modal-overlay" id="yearModal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="yearModalTitle">เพิ่มปีงบประมาณ</h3>
+        <h3 id="yearModalTitle">เพิ่มรอบประเมิน/ปี</h3>
         <button class="modal-close" onclick="closeModal('yearModal')">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="form-group"><label>ปีงบประมาณ (พ.ศ.) <span class="required">*</span></label><input type="number" id="inputYear" class="form-input"></div>
+        <div class="form-group"><label>รหัสรอบประเมิน/ปี (เช่น 2568, 2568-1) <span class="required">*</span></label><input type="text" id="inputYear" class="form-input"></div>
         <div class="form-group"><label>ชื่อนวัตกรรม <span class="required">*</span></label><input type="text" id="inputInnovation" class="form-input"></div>
         <div class="form-group"><label><input type="checkbox" id="inputActive"> เปิดใช้งาน (Active)</label></div>
       </div>
