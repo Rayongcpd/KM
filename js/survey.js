@@ -34,11 +34,15 @@ window.initSurvey = async function() {
       return;
     }
 
+    // หาข้อมูลปีที่ตรงกับ ID
+    const activeYearInfo = currentConfig.years.find(y => y.id === activeYear);
+    const displayYear = activeYearInfo ? activeYearInfo.year : activeYear;
+
     // อัพเดท header
     document.getElementById('header-title').textContent =
       `แบบสอบถามความพึงพอใจ — ${currentConfig.innovationName || 'นวัตกรรม'}`;
     document.getElementById('header-subtitle').textContent =
-      `ปีงบประมาณ ${activeYear}`;
+      `ปีงบประมาณ ${displayYear}`;
 
     // ดึงคำถาม
     const qResp = await callAPI('getQuestions', { year: activeYear });
