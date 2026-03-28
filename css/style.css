@@ -384,12 +384,10 @@ body::before {
   text-align: center;
   font-weight: 600;
   font-size: 0.85rem;
-  white-space: nowrap;
 }
 
 .rating-table thead th:first-child {
   text-align: left;
-  width: 50%;
 }
 
 .rating-table tbody tr {
@@ -414,6 +412,8 @@ body::before {
   text-align: left;
   font-weight: 500;
   line-height: 1.5;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .rating-table input[type="radio"] {
@@ -654,6 +654,8 @@ body::before {
 .summary-table tbody td:first-child {
   text-align: left;
   font-weight: 500;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .summary-table tbody tr:nth-child(even) {
