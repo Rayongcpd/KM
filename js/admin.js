@@ -114,8 +114,8 @@ function renderYearsList() {
       <div class="q-number">${y.year.toString().slice(-2)}</div>
       <div class="q-text"><strong>ปี ${y.year}</strong> — ${y.innovationName} <span class="badge ${y.isActive?'badge-active':'badge-inactive'}">${y.isActive?'Active':'Inactive'}</span></div>
       <div class="q-actions">
-        <button title="แก้ไข" onclick="editYear('${y.year}')"><i class="fas fa-edit"></i></button>
-        <button title="ลบ" onclick="deleteYear('${y.year}')"><i class="fas fa-trash"></i></button>
+        <button title="แก้ไข" onclick="editYear('${y.id}')"><i class="fas fa-edit"></i></button>
+        <button title="ลบ" onclick="deleteYear('${y.id}')"><i class="fas fa-trash"></i></button>
       </div>
     </div>`;
   });
@@ -129,7 +129,7 @@ function populateYearSelects() {
     sel.innerHTML = '';
     yearsData.forEach(y => {
       const o = document.createElement('option');
-      o.value = y.year; o.textContent = `ปี ${y.year}`;
+      o.value = y.id; o.textContent = `ปี ${y.year} - ${y.innovationName}`;
       if (y.isActive) o.selected = true;
       sel.appendChild(o);
     });
@@ -140,12 +140,12 @@ function populateYearSelects() {
   if (document.getElementById('rYearSelect')?.value) loadResponseStats();
 }
 
-function editYear(year) {
-  const y = yearsData.find(v => v.year == year);
+function editYear(id) {
+  const y = yearsData.find(v => v.id == id);
   if (!y) return;
   document.getElementById('yearModalTitle').textContent = 'แก้ไขปีงบประมาณ';
   document.getElementById('inputYear').value = y.year;
-  document.getElementById('inputYear').setAttribute('data-edit', y.year);
+  document.getElementById('inputYear').setAttribute('data-edit', y.id);
   document.getElementById('inputInnovation').value = y.innovationName;
   document.getElementById('inputActive').checked = y.isActive;
   openModal('yearModal');
@@ -167,11 +167,12 @@ async function saveYear() {
   } catch (e) { showLoading(false); showToast(e.message, 'error'); }
 }
 
-async function deleteYear(year) {
-  if (!confirm(`ต้องการลบปี ${year} หรือไม่?`)) return;
+async function deleteYear(id) {
+  const y = yearsData.find(v => v.id == id);
+  if (!confirm(`ต้องการลบปี ${y.year} - ${y.innovationName} หรือไม่?`)) return;
   showLoading(true);
   try {
-    const r = await callAPI('deleteConfig', { year, token: adminToken }, 'POST');
+    const r = await callAPI('deleteConfig', { year: id, token: adminToken }, 'POST');
     showLoading(false);
     if (r.success) { await loadYears(); showToast('ลบสำเร็จ', 'success'); }
     else showToast(r.error, 'error');

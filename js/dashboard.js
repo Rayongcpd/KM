@@ -24,7 +24,7 @@ window.initDashboard = async function() {
     sel.innerHTML = '';
     years.forEach(y => {
       const o = document.createElement('option');
-      o.value = y.year; o.textContent = `ปี ${y.year} — ${y.innovationName}`;
+      o.value = y.id; o.textContent = `ปี ${y.year} — ${y.innovationName}`;
       if (y.isActive) o.selected = true;
       sel.appendChild(o);
     });
