@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="แผงควบคุมสำหรับผู้ดูแลระบบ จัดการปีงบประมาณและคำถาม">
+  <title>Admin Panel | ระบบประเมินนวัตกรรม</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="header-brand">
+        <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+        <div>
+          <h1>Admin Panel</h1>
+          <div class="subtitle">จัดการระบบแบบสอบถาม</div>
+        </div>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="เปิดเมนู"><i class="fas fa-bars"></i></button>
+      <nav class="header-nav" id="headerNav">
+        <a href="index.html"><i class="fas fa-edit"></i> แบบสอบถาม</a>
+        <a href="dashboard.html"><i class="fas fa-chart-pie"></i> สรุปผล</a>
+        <a href="admin.html" class="active"><i class="fas fa-cog"></i> Admin</a>
+        <a href="#" id="btnLogout" style="display:none;"><i class="fas fa-sign-out-alt"></i> ออก</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Login Screen -->
+  <div id="loginScreen">
+    <div class="container">
+      <div class="card admin-login-card">
+        <div class="lock-icon"><i class="fas fa-lock"></i></div>
+        <h2 style="margin-bottom:8px; color:var(--navy-700);">เข้าสู่ระบบ Admin</h2>
+        <p style="color:var(--surface-500); margin-bottom:24px;">กรุณาใส่รหัสผ่านเพื่อดำเนินการ</p>
+        <div class="form-group">
+          <input type="password" id="passcodeInput" class="form-input passcode-input"
+                 placeholder="••••••" maxlength="20" autocomplete="off">
+        </div>
+        <p id="loginError" style="color:var(--danger); font-size:0.9rem; margin-bottom:16px; display:none;">
+          <i class="fas fa-exclamation-circle"></i> รหัสผ่านไม่ถูกต้อง
+        </p>
+        <button class="btn btn-primary btn-lg" id="btnLogin" style="width:100%;">
+          <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard (hidden until login) -->
+  <div id="adminDashboard" style="display:none;">
+    <main class="container container-wide">
+
+      <!-- Admin Tabs -->
+      <div class="admin-tabs" id="adminTabs">
+        <button class="admin-tab active" data-tab="tab-years"><i class="fas fa-calendar"></i> ปีงบประมาณ</button>
+        <button class="admin-tab" data-tab="tab-questions"><i class="fas fa-list-ol"></i> จัดการคำถาม</button>
+        <button class="admin-tab" data-tab="tab-responses"><i class="fas fa-database"></i> ข้อมูลตอบกลับ</button>
+        <button class="admin-tab" data-tab="tab-settings"><i class="fas fa-cog"></i> ตั้งค่า</button>
+      </div>
+
+      <!-- Tab: Years Management -->
+      <div class="tab-content active" id="tab-years">
+        <div class="card">
+          <div class="card-header">
+            <div class="icon icon-navy"><i class="fas fa-calendar-plus"></i></div>
+            <div>
+              <h2>จัดการปีงบประมาณ</h2>
+              <p>เพิ่ม แก้ไข เปิด/ปิดปีงบประมาณ</p>
+            </div>
+          </div>
+          <div class="btn-group" style="margin-top:0; margin-bottom:20px;">
+            <button class="btn btn-primary btn-sm" id="btnAddYear">
+              <i class="fas fa-plus"></i> เพิ่มปีงบประมาณ
+            </button>
+          </div>
+          <div id="yearsListContainer">
+            <div class="empty-state"><i class="fas fa-calendar"></i><p>กำลังโหลด...</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Questions Management -->
+      <div class="tab-content" id="tab-questions">
+        <div class="card">
+          <div class="card-header">
+            <div class="icon icon-gold"><i class="fas fa-list-ol"></i></div>
+            <div>
+              <h2>จัดการคำถาม</h2>
+              <p>เพิ่ม แก้ไข ลบ คำถามแต่ละปี</p>
+            </div>
+          </div>
+          <div class="year-selector" style="margin-bottom:16px;">
+            <label for="qYearSelect"><i class="fas fa-calendar-alt"></i> ปี:</label>
+            <select id="qYearSelect"></select>
+            <label for="qSectionSelect" style="margin-left:12px;"><i class="fas fa-layer-group"></i> ส่วน:</label>
+            <select id="qSectionSelect">
+              <option value="all">ทั้งหมด</option>
+              <option value="2.1">2.1 — ด้านการรับรู้</option>
+              <option value="2.2">2.2 — ด้านการใช้ประโยชน์</option>
+              <option value="2.3">2.3 — ด้านรูปแบบ</option>
+              <option value="2.4">2.4 — ผลสัมฤทธิ์</option>
+              <option value="open">คำถามปลายเปิด</option>
+            </select>
+          </div>
+          <div class="btn-group" style="margin-top:0; margin-bottom:20px;">
+            <button class="btn btn-primary btn-sm" id="btnAddQuestion">
+              <i class="fas fa-plus"></i> เพิ่มคำถาม
+            </button>
+          </div>
+          <div id="questionsListContainer">
+            <div class="empty-state"><i class="fas fa-list"></i><p>เลือกปีงบประมาณ</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Responses Data -->
+      <div class="tab-content" id="tab-responses">
+        <div class="card">
+          <div class="card-header">
+            <div class="icon icon-green"><i class="fas fa-database"></i></div>
+            <div>
+              <h2>ข้อมูลตอบกลับ</h2>
+              <p>ดูและ Export ข้อมูลดิบ</p>
+            </div>
+          </div>
+          <div class="year-selector" style="margin-bottom:16px;">
+            <label for="rYearSelect"><i class="fas fa-calendar-alt"></i> ปี:</label>
+            <select id="rYearSelect"></select>
+          </div>
+          <div class="stats-grid" style="margin-bottom:20px;">
+            <div class="stat-card">
+              <div class="stat-value" id="rTotalCount">0</div>
+              <div class="stat-label">จำนวนผู้ตอบทั้งหมด</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="rTodayCount">0</div>
+              <div class="stat-label">ตอบวันนี้</div>
+            </div>
+          </div>
+          <div class="btn-group" style="margin-top:0;">
+            <button class="btn btn-primary btn-sm" id="btnExportResponses">
+              <i class="fas fa-file-csv"></i> Export CSV
+            </button>
+            <button class="btn btn-danger btn-sm" id="btnClearResponses">
+              <i class="fas fa-trash"></i> ล้างข้อมูลปีนี้
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Settings -->
+      <div class="tab-content" id="tab-settings">
+        <div class="card">
+          <div class="card-header">
+            <div class="icon icon-navy"><i class="fas fa-cog"></i></div>
+            <div>
+              <h2>ตั้งค่าระบบ</h2>
+              <p>เปลี่ยนรหัสผ่าน admin</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>รหัสผ่านปัจจุบัน</label>
+            <input type="password" id="currentPasscode" class="form-input" placeholder="กรอกรหัสผ่านปัจจุบัน">
+          </div>
+          <div class="form-group">
+            <label>รหัสผ่านใหม่</label>
+            <input type="password" id="newPasscode" class="form-input" placeholder="กรอกรหัสผ่านใหม่">
+          </div>
+          <div class="form-group">
+            <label>ยืนยันรหัสผ่านใหม่</label>
+            <input type="password" id="confirmPasscode" class="form-input" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+          </div>
+          <button class="btn btn-primary" id="btnChangePasscode">
+            <i class="fas fa-key"></i> เปลี่ยนรหัสผ่าน
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal for Add/Edit Year -->
+  <div class="modal-overlay" id="yearModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="yearModalTitle">เพิ่มปีงบประมาณ</h3>
+        <button class="modal-close" onclick="closeModal('yearModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>ปีงบประมาณ (พ.ศ.) <span class="required">*</span></label>
+          <input type="number" id="inputYear" class="form-input" placeholder="เช่น 2568" min="2500" max="2600">
+        </div>
+        <div class="form-group">
+          <label>ชื่อนวัตกรรม <span class="required">*</span></label>
+          <input type="text" id="inputInnovation" class="form-input" placeholder="ชื่อนวัตกรรมที่ประเมิน">
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="inputActive"> เปิดใช้งาน (Active)
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('yearModal')">ยกเลิก</button>
+        <button class="btn btn-primary btn-sm" id="btnSaveYear"><i class="fas fa-save"></i> บันทึก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Add/Edit Question -->
+  <div class="modal-overlay" id="questionModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="questionModalTitle">เพิ่มคำถาม</h3>
+        <button class="modal-close" onclick="closeModal('questionModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>ส่วน <span class="required">*</span></label>
+          <select id="inputQSection" class="form-select">
+            <option value="2.1">2.1 — ด้านการรับรู้</option>
+            <option value="2.2">2.2 — ด้านการใช้ประโยชน์</option>
+            <option value="2.3">2.3 — ด้านรูปแบบ</option>
+            <option value="2.4">2.4 — ผลสัมฤทธิ์</option>
+            <option value="open">คำถามปลายเปิด</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ข้อความคำถาม <span class="required">*</span></label>
+          <textarea id="inputQText" class="form-textarea" placeholder="พิมพ์คำถาม..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>ประเภท</label>
+          <select id="inputQType" class="form-select">
+            <option value="rating5">Rating 5 ระดับ (ความพึงพอใจ)</option>
+            <option value="rating5_quality">Rating 5 ระดับ (คุณภาพ)</option>
+            <option value="text">ข้อความเปิด</option>
+          </select>
+        </div>
+        <input type="hidden" id="inputQId">
+        <input type="hidden" id="inputQYear">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('questionModal')">ยกเลิก</button>
+        <button class="btn btn-primary btn-sm" id="btnSaveQuestion"><i class="fas fa-save"></i> บันทึก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p class="loading-text">กำลังดำเนินการ...</p>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer class="footer">
+    <p>ระบบแบบสอบถามความพึงพอใจ © <span id="footerYear">2568</span></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

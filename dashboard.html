@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="สรุปผลแบบสอบถามความพึงพอใจ แสดงสถิติรายละเอียด เป็นเปอร์เซ็นต์">
+  <title>สรุปผล | ระบบประเมินนวัตกรรม</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="header-brand">
+        <div class="logo-icon"><i class="fas fa-clipboard-check"></i></div>
+        <div>
+          <h1>สรุปผลแบบสอบถาม</h1>
+          <div class="subtitle" id="header-subtitle">ระบบประเมินนวัตกรรม</div>
+        </div>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="เปิดเมนู"><i class="fas fa-bars"></i></button>
+      <nav class="header-nav" id="headerNav">
+        <a href="index.html"><i class="fas fa-edit"></i> ทำแบบสอบถาม</a>
+        <a href="dashboard.html" class="active"><i class="fas fa-chart-pie"></i> สรุปผล</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container container-wide">
+
+    <!-- Year Selector -->
+    <div class="year-selector">
+      <label for="yearSelect" style="font-weight:600;"><i class="fas fa-calendar-alt"></i> ปีงบประมาณ:</label>
+      <select id="yearSelect"></select>
+      <button class="btn btn-sm btn-outline" id="btnRefresh"><i class="fas fa-sync-alt"></i> รีเฟรช</button>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--info-light); color: var(--info);">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-value" id="totalResponses">-</div>
+        <div class="stat-label">จำนวนผู้ตอบ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--success-light); color: var(--success);">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-value" id="avgScore">-</div>
+        <div class="stat-label">ค่าเฉลี่ยรวม (จาก 5.00)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--warning-light); color: var(--warning);">
+          <i class="fas fa-percentage"></i>
+        </div>
+        <div class="stat-value" id="satisfactionPct">-</div>
+        <div class="stat-label">% ความพึงพอใจ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, var(--gold-100), var(--gold-50)); color: var(--gold-600);">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <div class="stat-value" id="innovationName" style="font-size:1rem;">-</div>
+        <div class="stat-label">ชื่อนวัตกรรม</div>
+      </div>
+    </div>
+
+    <!-- Charts Row: Demographics -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon icon-navy"><i class="fas fa-users-cog"></i></div>
+        <div>
+          <h2>ข้อมูลทั่วไปผู้ตอบแบบสอบถาม</h2>
+          <p>สัดส่วนเพศ, ช่วงอายุ, วุฒิการศึกษา</p>
+        </div>
+      </div>
+      <div class="chart-row" id="demographicCharts">
+        <div class="chart-container"><canvas id="chartGender"></canvas></div>
+        <div class="chart-container"><canvas id="chartAge"></canvas></div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-container"><canvas id="chartEducation"></canvas></div>
+        <div class="chart-container"><canvas id="chartExperience"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Section 2.1 Summary -->
+    <div class="card" id="card-section-2-1">
+      <div class="card-header">
+        <div class="icon icon-gold"><i class="fas fa-eye"></i></div>
+        <div>
+          <h2 id="section21Title">ส่วนที่ 2.1 — ด้านระดับการรับรู้นวัตกรรม</h2>
+        </div>
+      </div>
+      <div id="table21Container"></div>
+    </div>
+
+    <!-- Section 2.2 Summary -->
+    <div class="card" id="card-section-2-2">
+      <div class="card-header">
+        <div class="icon icon-navy"><i class="fas fa-cogs"></i></div>
+        <div>
+          <h2 id="section22Title">ส่วนที่ 2.2 — ด้านการใช้ประโยชน์จากนวัตกรรม</h2>
+        </div>
+      </div>
+      <div id="table22Container"></div>
+    </div>
+
+    <!-- Section 2.3 Summary -->
+    <div class="card" id="card-section-2-3">
+      <div class="card-header">
+        <div class="icon icon-green"><i class="fas fa-shapes"></i></div>
+        <div>
+          <h2 id="section23Title">ส่วนที่ 2.3 — ด้านรูปแบบของนวัตกรรม</h2>
+        </div>
+      </div>
+      <div id="table23Container"></div>
+    </div>
+
+    <!-- Section 2.4 Summary -->
+    <div class="card" id="card-section-2-4">
+      <div class="card-header">
+        <div class="icon icon-gold"><i class="fas fa-bullseye"></i></div>
+        <div>
+          <h2 id="section24Title">ส่วนที่ 2.4 — การประเมินผลสัมฤทธิ์/ผลลัพธ์</h2>
+        </div>
+      </div>
+      <div id="table24Container"></div>
+    </div>
+
+    <!-- Bar Chart: Avg per section -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon icon-navy"><i class="fas fa-chart-bar"></i></div>
+        <div>
+          <h2>คะแนนเฉลี่ยรายด้าน</h2>
+          <p>เปรียบเทียบค่าเฉลี่ยของแต่ละด้าน</p>
+        </div>
+      </div>
+      <div class="chart-container"><canvas id="chartSectionAvg"></canvas></div>
+    </div>
+
+    <!-- Open-ended responses -->
+    <div class="card" id="card-open-ended">
+      <div class="card-header">
+        <div class="icon icon-green"><i class="fas fa-comment-dots"></i></div>
+        <div>
+          <h2>ข้อเสนอแนะ / ความคิดเห็นเพิ่มเติม</h2>
+        </div>
+      </div>
+      <div id="openEndedContainer">
+        <div class="empty-state">
+          <i class="fas fa-comments"></i>
+          <p>ยังไม่มีข้อมูล</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="btn-group" style="justify-content: center; margin-bottom: 40px;">
+      <button class="btn btn-primary" id="btnExportCSV"><i class="fas fa-file-csv"></i> Export CSV</button>
+      <button class="btn btn-gold" id="btnPrint"><i class="fas fa-print"></i> พิมพ์รายงาน</button>
+    </div>
+
+  </main>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p class="loading-text">กำลังโหลดข้อมูล...</p>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer class="footer">
+    <p>ระบบแบบสอบถามความพึงพอใจ © <span id="footerYear">2568</span></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
