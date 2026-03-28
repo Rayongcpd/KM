@@ -1431,14 +1431,15 @@ body::before {
     gap: 12px;
   }
 
+  /* Each row becomes a card */
   .rating-table tbody tr {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     background: var(--surface-50);
     border: 1px solid var(--surface-200);
     border-radius: var(--radius-sm);
     padding: 14px;
-    gap: 10px;
+    gap: 0;
   }
 
   .rating-table tbody tr:nth-child(even) {
@@ -1449,84 +1450,58 @@ body::before {
     background: var(--navy-50);
   }
 
-  .rating-table tbody td {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    border: none;
-  }
-
+  /* Question text — full width on top */
   .rating-table tbody td:first-child {
+    flex: 0 0 100%;
+    width: 100%;
+    display: block;
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--navy-700);
     text-align: left;
-    padding-bottom: 6px;
+    padding: 0 0 10px 0;
+    margin-bottom: 10px;
     border-bottom: 1px solid var(--surface-200);
-    display: block;
+    border-top: none;
   }
 
-  /* Rating options in a row */
-  .rating-table tbody tr {
-    position: relative;
-  }
-
+  /* Rating cells — horizontal row */
   .rating-table tbody td:not(:first-child) {
-    flex: 1;
-    justify-content: center;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 6px 2px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 2px;
+    border: none;
     border-radius: 6px;
     transition: var(--transition-fast);
-  }
-
-  .rating-table tbody td:not(:first-child)::before {
-    font-size: 0.65rem;
-    color: var(--surface-500);
-    font-weight: 600;
-    display: block;
     text-align: center;
   }
 
   /* Label for each rating option */
-  .rating-table tbody td:nth-child(2)::before { content: '5 มากที่สุด'; }
-  .rating-table tbody td:nth-child(3)::before { content: '4 มาก'; }
-  .rating-table tbody td:nth-child(4)::before { content: '3 ปานกลาง'; }
-  .rating-table tbody td:nth-child(5)::before { content: '2 น้อย'; }
-  .rating-table tbody td:nth-child(6)::before { content: '1 น้อยที่สุด'; }
+  .rating-table tbody td:not(:first-child)::before {
+    font-size: 0.62rem;
+    color: var(--surface-500);
+    font-weight: 600;
+    display: block;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .rating-table tbody td:nth-child(2)::before { content: '5\Aมากที่สุด'; white-space: pre-line; }
+  .rating-table tbody td:nth-child(3)::before { content: '4\Aมาก'; white-space: pre-line; }
+  .rating-table tbody td:nth-child(4)::before { content: '3\Aปานกลาง'; white-space: pre-line; }
+  .rating-table tbody td:nth-child(5)::before { content: '2\Aน้อย'; white-space: pre-line; }
+  .rating-table tbody td:nth-child(6)::before { content: '1\Aน้อยที่สุด'; white-space: pre-line; }
 
   .rating-table input[type="radio"] {
-    width: 22px;
-    height: 22px;
-  }
-
-  /* Wrap the 5 rating options in a row */
-  .rating-table tbody tr {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .rating-table tbody tr > td:first-child {
-    grid-column: 1 / -1;
-    margin-bottom: 8px;
-  }
-
-  /* Create a flex row for rating cells */
-  .rating-table tbody tr {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .rating-table tbody td:first-child {
-    width: 100%;
-    flex: 0 0 100%;
-  }
-
-  .rating-table tbody td:not(:first-child) {
-    flex: 1 1 0;
-    min-width: 0;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    cursor: pointer;
   }
 
   /* --- Radio / Checkbox: Full width --- */
