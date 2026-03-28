@@ -3,6 +3,8 @@
    Theme: Thai Government — Navy, Gold, White
    ============================================ */
 
+/* Safe area for iPhone notch / Dynamic Island */
+
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
 
 /* --- CSS Variables --- */
@@ -101,6 +103,7 @@ body::before {
   background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-600) 100%);
   color: white;
   padding: 0;
+  padding-top: env(safe-area-inset-top, 0px);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -1098,6 +1101,7 @@ body::before {
 .footer {
   text-align: center;
   padding: 24px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   color: var(--surface-400);
   font-size: 0.85rem;
   margin-top: 48px;
@@ -1105,30 +1109,73 @@ body::before {
 }
 
 /* --- Responsive --- */
+
+/* ====== Tablet (768px) ====== */
 @media (max-width: 768px) {
   .header-inner {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    padding: 12px 16px;
+    position: relative;
+  }
+
+  .header-brand {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .header-brand > div {
+    min-width: 0;
+  }
+
+  .header-brand h1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .header-nav {
     display: none;
-    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     flex-direction: column;
     gap: 4px;
-    padding-top: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-600) 100%);
     border-top: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 20px rgba(10, 22, 40, 0.3);
+    z-index: 100;
   }
 
   .header-nav.show {
     display: flex;
   }
 
+  .header-nav a {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+  }
+
   .menu-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    min-width: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
   }
 
   .container {
     padding: 16px 12px;
+  }
+
+  .container-wide {
+    max-width: 100%;
   }
 
   .card {
@@ -1136,55 +1183,727 @@ body::before {
     border-radius: var(--radius-md);
   }
 
+  .card-header {
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .card-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .card-header p {
+    font-size: 0.8rem;
+  }
+
+  /* --- Radio / Checkbox groups --- */
+  .radio-group,
+  .checkbox-group {
+    gap: 8px;
+  }
+
   .radio-group label,
   .checkbox-group label {
-    min-width: 100px;
-    padding: 8px 12px;
+    min-width: 0;
+    flex: 1 1 calc(50% - 4px);
+    padding: 10px 12px;
     font-size: 0.85rem;
   }
 
+  /* --- Rating table on tablet: still table but compacted --- */
   .rating-table {
     font-size: 0.8rem;
   }
 
   .rating-table thead th {
-    padding: 10px 6px;
-    font-size: 0.75rem;
+    padding: 10px 4px;
+    font-size: 0.72rem;
   }
 
   .rating-table tbody td {
-    padding: 10px 6px;
+    padding: 10px 4px;
   }
 
   .rating-table input[type="radio"] {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
+  /* --- Charts --- */
   .chart-row {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
+  .chart-row .chart-container {
+    max-width: 320px;
+  }
+
+  /* --- Stats --- */
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.5rem;
+  }
+
+  /* --- Buttons --- */
   .btn-group {
     flex-direction: column;
   }
 
+  .btn-group .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* --- Year Selector --- */
+  .year-selector {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .year-selector label {
+    font-size: 0.85rem;
+  }
+
+  .year-selector select {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* --- Admin Tabs: Horizontal scroll --- */
+  .admin-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .admin-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-tab {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  /* --- Summary Table: scrollable --- */
+  .summary-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .summary-table {
+    min-width: 500px;
+  }
+
+  /* --- Question Item (admin) --- */
+  .question-item {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .question-item .q-text {
+    flex: 1 1 100%;
+    order: 2;
+    font-size: 0.85rem;
+    padding-left: 40px;
+    margin-top: -4px;
+  }
+
+  .question-item .q-type {
+    order: 3;
+    margin-left: 40px;
+  }
+
+  .question-item .q-actions {
+    order: 1;
+    margin-left: auto;
+  }
+
+  /* --- Modal --- */
+  .modal-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .modal-body {
+    padding: 20px 16px;
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+  }
+
+  /* --- Toast --- */
+  .toast-container {
+    top: auto;
+    bottom: 20px;
+    right: 12px;
+    left: 12px;
+  }
+
   .toast {
     min-width: auto;
-    max-width: calc(100vw - 40px);
+    max-width: 100%;
+  }
+
+  /* --- Admin login --- */
+  .admin-login-card {
+    margin: 40px auto;
+  }
+
+  .passcode-input {
+    font-size: 1.4rem;
+    letter-spacing: 8px;
+  }
+
+  /* --- Thank you page --- */
+  .thankyou-container {
+    margin: 40px auto;
+  }
+
+  .thankyou-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
+  }
+
+  .thankyou-container h2 {
+    font-size: 1.3rem;
+  }
+
+  /* --- Progress Bar --- */
+  .progress-info {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  /* --- Footer --- */
+  .footer {
+    margin-top: 24px;
+    padding: 16px 12px;
+    font-size: 0.8rem;
   }
 }
 
+/* ====== Small Phones (600px) — Rating table to card layout ====== */
+@media (max-width: 600px) {
+  /* Convert rating table to stacked card layout */
+  .rating-table {
+    border: none;
+    border-radius: 0;
+  }
+
+  .rating-table thead {
+    display: none;
+  }
+
+  .rating-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rating-table tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-50);
+    border: 1px solid var(--surface-200);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .rating-table tbody tr:nth-child(even) {
+    background: var(--surface-50);
+  }
+
+  .rating-table tbody tr:hover {
+    background: var(--navy-50);
+  }
+
+  .rating-table tbody td {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: none;
+  }
+
+  .rating-table tbody td:first-child {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--navy-700);
+    text-align: left;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--surface-200);
+    display: block;
+  }
+
+  /* Rating options in a row */
+  .rating-table tbody tr {
+    position: relative;
+  }
+
+  .rating-table tbody td:not(:first-child) {
+    flex: 1;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 2px;
+    border-radius: 6px;
+    transition: var(--transition-fast);
+  }
+
+  .rating-table tbody td:not(:first-child)::before {
+    font-size: 0.65rem;
+    color: var(--surface-500);
+    font-weight: 600;
+    display: block;
+    text-align: center;
+  }
+
+  /* Label for each rating option */
+  .rating-table tbody td:nth-child(2)::before { content: '5 มากที่สุด'; }
+  .rating-table tbody td:nth-child(3)::before { content: '4 มาก'; }
+  .rating-table tbody td:nth-child(4)::before { content: '3 ปานกลาง'; }
+  .rating-table tbody td:nth-child(5)::before { content: '2 น้อย'; }
+  .rating-table tbody td:nth-child(6)::before { content: '1 น้อยที่สุด'; }
+
+  .rating-table input[type="radio"] {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Wrap the 5 rating options in a row */
+  .rating-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .rating-table tbody tr > td:first-child {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+  }
+
+  /* Create a flex row for rating cells */
+  .rating-table tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .rating-table tbody td:first-child {
+    width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .rating-table tbody td:not(:first-child) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* --- Radio / Checkbox: Full width --- */
+  .radio-group label,
+  .checkbox-group label {
+    flex: 1 1 100%;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  /* --- Summary table --- */
+  .summary-table {
+    font-size: 0.8rem;
+  }
+
+  .summary-table thead th {
+    padding: 10px 6px;
+    font-size: 0.75rem;
+  }
+
+  .summary-table tbody td {
+    padding: 10px 6px;
+  }
+}
+
+/* ====== Extra Small (480px) ====== */
 @media (max-width: 480px) {
+  html {
+    font-size: 15px;
+  }
+
+  .header-inner {
+    padding: 10px 12px;
+  }
+
+  .header-brand .logo-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+
+  .header-brand h1 {
+    font-size: 0.95rem;
+  }
+
+  .header-brand .subtitle {
+    font-size: 0.7rem;
+  }
+
+  .container {
+    padding: 12px 10px;
+  }
+
+  .card {
+    padding: 16px 12px;
+    margin-bottom: 16px;
+  }
+
+  .card-header .icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .card-header h2 {
+    font-size: 0.95rem;
+  }
+
+  /* --- Stats --- */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px 8px;
+  }
+
+  .stat-card .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .stat-card .stat-label {
+    font-size: 0.75rem;
+  }
+
+  /* --- Buttons --- */
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  .btn-sm {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    min-height: 40px;
+  }
+
+  .btn-lg {
+    padding: 14px 28px;
+    font-size: 0.95rem;
+  }
+
+  /* --- Form --- */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 12px 14px;
+    font-size: 1rem;
+  }
+
+  /* --- Year Selector --- */
+  .year-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .year-selector label {
+    font-size: 0.85rem;
+    margin-bottom: -4px;
+  }
+
+  .year-selector select {
+    width: 100%;
+  }
+
+  .year-selector .btn {
+    width: 100%;
+  }
+
+  /* --- Admin Tabs: 2 column grid on very small --- */
+  .admin-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    overflow-x: visible;
+  }
+
+  .admin-tab {
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 0.78rem;
+  }
+
+  .admin-tab i {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 1rem;
+  }
+
+  /* --- Passcode --- */
+  .passcode-input {
+    font-size: 1.2rem;
+    letter-spacing: 6px;
+    padding: 14px;
+  }
+
+  .admin-login-card {
+    margin: 24px auto;
+    padding: 24px 16px;
+  }
+
+  .admin-login-card .lock-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+  }
+
+  /* --- Modal: Full screen on very small --- */
+  .modal-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .modal {
+    max-height: 100vh;
+    height: 100%;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 12px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  /* --- Thank you page --- */
+  .thankyou-container {
+    margin: 24px auto;
+    padding: 24px 16px;
+  }
+
+  .thankyou-icon {
+    width: 72px;
+    height: 72px;
+    font-size: 2rem;
+  }
+
+  .thankyou-container h2 {
+    font-size: 1.2rem;
+  }
+
+  .thankyou-container p {
+    font-size: 0.9rem;
+  }
+
+  /* --- Question Item --- */
+  .question-item .q-text {
+    padding-left: 0;
+    font-size: 0.82rem;
+  }
+
+  .question-item .q-type {
+    margin-left: 0;
+  }
+}
+
+/* ====== Ultra Small (360px) ====== */
+@media (max-width: 360px) {
+  html {
+    font-size: 14px;
+  }
+
+  .header-brand {
+    gap: 10px;
+  }
+
+  .header-brand .logo-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+  .header-brand h1 {
+    font-size: 0.88rem;
+  }
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
 
-  .header-brand h1 {
-    font-size: 1rem;
+  .stat-card .stat-value {
+    font-size: 1.5rem;
+  }
+
+  /* Rating options even smaller */
+  .rating-table tbody td:not(:first-child)::before {
+    font-size: 0.58rem;
+  }
+
+  .rating-table input[type="radio"] {
+    width: 20px;
+    height: 20px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ====== Touch-friendly: Ensure minimum touch targets ====== */
+@media (hover: none) and (pointer: coarse) {
+  .header-nav a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
+
+  .rating-table input[type="radio"] {
+    width: 24px;
+    height: 24px;
+  }
+
+  .radio-group label,
+  .checkbox-group label {
+    min-height: 44px;
+  }
+
+  .question-item .q-actions button {
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-tab {
+    min-height: 44px;
+  }
+
+  .year-selector select {
+    min-height: 44px;
+  }
+
+  .modal-close {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+}
+
+/* ====== Print ====== */
+@media print {
+  .header,
+  .menu-toggle,
+  .progress-container,
+  .btn-group,
+  .footer,
+  .toast-container,
+  .loading-overlay,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .container,
+  .container-wide {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .rating-table thead {
+    display: table-header-group !important;
+  }
+
+  .rating-table tbody {
+    display: table-row-group !important;
+  }
+
+  .rating-table tbody tr {
+    display: table-row !important;
+  }
+
+  .rating-table tbody td {
+    display: table-cell !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .chart-row {
+    grid-template-columns: 1fr 1fr;
   }
 }

@@ -110,8 +110,26 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('footerYear').textContent = new Date().getFullYear() + 543;
 
   // เมนูแฮมเบอร์เกอร์
-  document.getElementById('menuToggle')?.addEventListener('click', () => {
-    document.getElementById('headerNav')?.classList.toggle('show');
+  const menuToggleBtn = document.getElementById('menuToggle');
+  const headerNav = document.getElementById('headerNav');
+
+  menuToggleBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    headerNav?.classList.toggle('show');
+  });
+
+  // ปิดเมนูเมื่อคลิกลิงก์
+  headerNav?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      headerNav.classList.remove('show');
+    });
+  });
+
+  // ปิดเมนูเมื่อคลิกข้างนอก
+  document.addEventListener('click', (e) => {
+    if (headerNav?.classList.contains('show') && !headerNav.contains(e.target) && e.target !== menuToggleBtn) {
+      headerNav.classList.remove('show');
+    }
   });
 
   // ====== 3-Click Admin Trigger ======
