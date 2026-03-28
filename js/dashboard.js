@@ -56,7 +56,8 @@ function renderStats(d) {
   document.getElementById('totalResponses').textContent = d.totalResponses.toLocaleString();
   document.getElementById('avgScore').textContent = d.overallAvg.toFixed(2);
   document.getElementById('satisfactionPct').textContent = ((d.overallAvg / 5) * 100).toFixed(1) + '%';
-  document.getElementById('innovationName').textContent = d.innovationName || '-';
+  const nameEl = document.getElementById('dashInnovationName') || document.getElementById('innovationName');
+  if (nameEl) nameEl.textContent = d.innovationName || '-';
 }
 
 function renderDemoCharts(demo) {
