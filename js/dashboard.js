@@ -2,38 +2,19 @@
  * dashboard.js — สรุปผลแบบสอบถาม
  */
 
-function showToast(msg, type = 'info') {
-  const c = document.getElementById('toastContainer');
-  const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
-  const t = document.createElement('div');
-  t.className = `toast toast-${type}`;
-  t.innerHTML = `<span class="toast-icon"><i class="fas ${icons[type]}"></i></span><span class="toast-message">${msg}</span>`;
-  c.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 4000);
-}
-
-function showLoading(s) {
-  const o = document.getElementById('loadingOverlay');
-  s ? o.classList.add('show') : o.classList.remove('show');
-}
-
-async function callAPI(action, params = {}) {
-  const url = APP_CONFIG.APPS_SCRIPT_URL;
-  if (!url || url === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') throw new Error('ตั้งค่า APPS_SCRIPT_URL ก่อน');
-  const qs = new URLSearchParams({ action, ...params }).toString();
-  const resp = await fetch(`${url}?${qs}`);
-  return resp.json();
-}
-
 const chartInstances = {};
 function destroyChart(id) { if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; } }
 
-document.getElementById('menuToggle')?.addEventListener('click', () => document.getElementById('headerNav')?.classList.toggle('show'));
-
 let currentSummary = null;
-
-document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('footerYear').textContent = new Date().getFullYear() + 543;
+let dashboardInitialized = false;
+window.initDashboard = async function() {
+  if (dashboardInitialized) {
+    // รีเฟรชข้อมูลเมื่อเข้ามาหน้า dashboard ใหม่
+    const sel = document.getElementById('yearSelect');
+    if (sel && sel.value) loadDashboard(sel.value);
+    return;
+  }
+  dashboardInitialized = true;
   try {
     showLoading(true);
     const cfg = await callAPI('getConfig');
@@ -54,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (sel.value) await loadDashboard(sel.value);
     else showLoading(false);
   } catch (e) { showLoading(false); showToast(e.message, 'error'); }
-});
+};
 
 async function loadDashboard(year) {
   showLoading(true);

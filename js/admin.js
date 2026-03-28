@@ -3,21 +3,6 @@
  * Login ตรวจสอบรหัสจาก Google Sheet (ไม่ hardcode)
  */
 
-function showToast(msg, type='info') {
-  const c=document.getElementById('toastContainer'), icons={success:'fa-check-circle',error:'fa-exclamation-circle',warning:'fa-exclamation-triangle',info:'fa-info-circle'};
-  const t=document.createElement('div'); t.className=`toast toast-${type}`;
-  t.innerHTML=`<span class="toast-icon"><i class="fas ${icons[type]}"></i></span><span class="toast-message">${msg}</span>`;
-  c.appendChild(t); setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300);},4000);
-}
-function showLoading(s) { const o=document.getElementById('loadingOverlay'); s?o.classList.add('show'):o.classList.remove('show'); }
-
-async function callAPI(action, params={}, method='GET') {
-  const url=APP_CONFIG.APPS_SCRIPT_URL;
-  if(!url||url==='YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') throw new Error('ตั้งค่า APPS_SCRIPT_URL ก่อน');
-  if(method==='GET'){ const qs=new URLSearchParams({action,...params}).toString(); return (await fetch(`${url}?${qs}`)).json(); }
-  else { return (await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action,...params})})).json(); }
-}
-
 function closeModal(id) { document.getElementById(id)?.classList.remove('show'); }
 function openModal(id) { document.getElementById(id)?.classList.add('show'); }
 
@@ -26,10 +11,10 @@ let adminToken = sessionStorage.getItem('adminToken') || '';
 let yearsData = [];
 
 // ====== Init ======
-document.getElementById('menuToggle')?.addEventListener('click', () => document.getElementById('headerNav')?.classList.toggle('show'));
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('footerYear').textContent = new Date().getFullYear() + 543;
+let adminInitialized = false;
+window.initAdmin = async function() {
+  if (adminInitialized) return;
+  adminInitialized = true;
 
   // Login
   document.getElementById('btnLogin').addEventListener('click', doLogin);
@@ -68,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Settings
   document.getElementById('btnChangePasscode').addEventListener('click', changePasscode);
-  document.getElementById('btnLogout').addEventListener('click', () => { sessionStorage.removeItem('adminToken'); location.reload(); });
+  document.getElementById('btnLogout').addEventListener('click', () => { appRouter.logout(); });
 
   // Other buttons
   document.getElementById('btnExportResponses')?.addEventListener('click', exportResponses);
@@ -78,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (adminToken) {
     showAdminPanel();
   }
-});
+};
 
 // ====== Login ======
 async function doLogin() {

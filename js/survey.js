@@ -5,73 +5,21 @@
 
 // ====== Utility Functions ======
 
-/**
- * แสดง toast notification
- * @param {string} message - ข้อความ
- * @param {'success'|'error'|'warning'|'info'} type
- */
-function showToast(message, type = 'info') {
-  const container = document.getElementById('toastContainer');
-  const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `
-    <span class="toast-icon"><i class="fas ${icons[type]}"></i></span>
-    <span class="toast-message">${message}</span>
-  `;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(100px)';
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
-}
-
-/** แสดง/ซ่อน loading */
-function showLoading(show = true, text = 'กำลังดำเนินการ...') {
-  const overlay = document.getElementById('loadingOverlay');
-  const loadingText = document.getElementById('loadingText');
-  if (loadingText) loadingText.textContent = text;
-  if (show) overlay.classList.add('show');
-  else overlay.classList.remove('show');
-}
-
-/** เรียก API */
-async function callAPI(action, params = {}, method = 'GET') {
-  const url = APP_CONFIG.APPS_SCRIPT_URL;
-  if (!url || url === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
-    throw new Error('กรุณาตั้งค่า APPS_SCRIPT_URL ใน config.js');
-  }
-
-  if (method === 'GET') {
-    const qs = new URLSearchParams({ action, ...params }).toString();
-    const resp = await fetch(`${url}?${qs}`);
-    return resp.json();
-  } else {
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action, ...params })
-    });
-    return resp.json();
-  }
-}
-
 // ====== State ======
 let currentConfig = null;
 let currentQuestions = [];
 let currentSection = 0;
 const totalSections = 6; // info + 2.1 + 2.2 + 2.3 + 2.4 + confirm
 
-// ====== Menu Toggle ======
-document.getElementById('menuToggle')?.addEventListener('click', () => {
-  document.getElementById('headerNav')?.classList.toggle('show');
-});
-
 // ====== Initialize ======
-document.addEventListener('DOMContentLoaded', init);
-
-async function init() {
+let surveyInitialized = false;
+window.initSurvey = async function() {
+  if (surveyInitialized) {
+    // โหลดใหม่หรือแสดงหน้าแรก
+    showSection(0);
+    return;
+  }
+  surveyInitialized = true;
   document.getElementById('footerYear').textContent = new Date().getFullYear() + 543;
 
   try {
@@ -439,7 +387,8 @@ async function submitSurvey() {
     showLoading(false);
 
     if (result.success) {
-      window.location.href = 'thank-you.html';
+      navigateSection(-currentSection); // Reset to index 0 visually
+      appRouter.navigate('thankyou');
     } else {
       showToast(result.error || 'เกิดข้อผิดพลาดในการบันทึก', 'error');
     }
