@@ -56,6 +56,17 @@ const appRouter = {
   
   navigate: function(viewId) {
     if (this.currentView === viewId) return;
+
+    // ตรวจสอบสิทธิ์การเข้าถึงหน้า Dashboard
+    if (viewId === 'dashboard') {
+      const token = sessionStorage.getItem('adminToken');
+      if (!token) {
+        showToast('หน้านี้สำหรับ Admin เท่านั้น กรุณาเข้าสู่ระบบ', 'warning');
+        if (this.currentView === '') this.navigate('survey');
+        return;
+      }
+    }
+
     this.currentView = viewId;
 
     // ซ่อนทุก view
@@ -96,7 +107,10 @@ const appRouter = {
     sessionStorage.removeItem('adminToken');
     if (window.adminToken !== undefined) window.adminToken = '';
     
+    // ซ่อนเมนู Admin และสรุปผล
     document.getElementById('nav-admin-link').style.display = 'none';
+    document.getElementById('nav-dashboard').style.display = 'none';
+    document.getElementById('btn-thankyou-dashboard').style.display = 'none';
     document.getElementById('btnLogout').style.display = 'none';
     
     this.navigate('survey');
@@ -153,6 +167,14 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('🔓 ปลดล็อกหน้าต่างเข้าสู่ระบบ Admin', 'info');
       }
     });
+  }
+
+  // Check init admin status
+  const token = sessionStorage.getItem('adminToken');
+  if (token) {
+    document.getElementById('nav-admin-link').style.display = 'inline-flex';
+    document.getElementById('nav-dashboard').style.display = 'inline-flex';
+    document.getElementById('btn-thankyou-dashboard').style.display = 'inline-flex';
   }
 
   // เริ่มต้นที่หน้า Survey

@@ -91,6 +91,11 @@ async function showAdminPanel() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminDashboard').style.display = 'block';
   document.getElementById('btnLogout').style.display = 'inline-flex';
+  
+  // แสดงเมนูสรุปผล
+  document.getElementById('nav-dashboard').style.display = 'inline-flex';
+  document.getElementById('btn-thankyou-dashboard').style.display = 'inline-flex';
+  
   await loadYears();
 }
 

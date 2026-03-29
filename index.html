@@ -24,7 +24,7 @@
       <button class="menu-toggle" id="menuToggle" aria-label="เปิดเมนู"><i class="fas fa-bars"></i></button>
       <nav class="header-nav" id="headerNav">
         <a href="#" id="nav-survey" class="active" onclick="appRouter.navigate('survey'); return false;"><i class="fas fa-edit"></i> ทำแบบสอบถาม</a>
-        <a href="#" id="nav-dashboard" onclick="appRouter.navigate('dashboard'); return false;"><i class="fas fa-chart-pie"></i> สรุปผล</a>
+        <a href="#" id="nav-dashboard" style="display:none;" onclick="appRouter.navigate('dashboard'); return false;"><i class="fas fa-chart-pie"></i> สรุปผล</a>
         <a href="#" id="nav-admin-link" style="display:none;" onclick="appRouter.navigate('admin'); return false;"><i class="fas fa-cog"></i> Admin</a>
         <a href="#" id="btnLogout" style="display:none;"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
       </nav>
@@ -68,7 +68,7 @@
         <p>ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว<br>ความคิดเห็นของท่านจะถูกนำไปใช้ในการพัฒนาต่อไป</p>
         <div class="btn-group" style="justify-content: center;">
           <button class="btn btn-outline" onclick="appRouter.navigate('survey');"><i class="fas fa-redo"></i> ทำแบบสอบถามอีกครั้ง</button>
-          <button class="btn btn-primary" onclick="appRouter.navigate('dashboard');"><i class="fas fa-chart-pie"></i> ดูสรุปผล</button>
+          <button class="btn btn-primary" id="btn-thankyou-dashboard" style="display:none;" onclick="appRouter.navigate('dashboard');"><i class="fas fa-chart-pie"></i> ดูสรุปผล</button>
         </div>
       </div>
     </main>
