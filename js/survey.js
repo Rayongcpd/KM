@@ -401,7 +401,9 @@ async function submitSurvey() {
     showLoading(false);
 
     if (result.success) {
-      navigateSection(-currentSection); // Reset to index 0 visually
+      // รีเซ็ตสถานะเพื่อให้การเข้าหน้า Survey ครั้งต่อไปเป็นการเริ่มใหม่ (Clear DOM)
+      surveyInitialized = false;
+      currentSection = 0;
       appRouter.navigate('thankyou');
     } else {
       showToast(result.error || 'เกิดข้อผิดพลาดในการบันทึก', 'error');
