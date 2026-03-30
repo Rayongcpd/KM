@@ -61,25 +61,48 @@ function renderStats(d) {
 }
 
 function renderDemoCharts(demo) {
-  if (!demo) return;
-  [
-    { id: 'chartGender', data: demo.gender, label: 'เพศ' },
-    { id: 'chartAge', data: demo.age, label: 'ช่วงอายุ' },
-    { id: 'chartEducation', data: demo.education, label: 'วุฒิการศึกษา' },
-    { id: 'chartExperience', data: demo.experience, label: 'อายุราชการ' }
-  ].forEach(cfg => {
-    destroyChart(cfg.id);
-    const ctx = document.getElementById(cfg.id)?.getContext('2d');
-    if (!ctx || !cfg.data) return;
-    const labels = Object.keys(cfg.data), values = Object.values(cfg.data);
+  const container = document.getElementById('demographicChartsContainer');
+  if (!container || !demo) return;
+  container.innerHTML = ''; // ล้างข้อมูลเก่า
+
+  Object.keys(demo).forEach(id => {
+    const field = demo[id];
+    const data = field.counts || {};
+    const label = field.label || id;
+    
+    // สร้าง wrapper และ canvas
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chart-container';
+    const canvas = document.createElement('canvas');
+    canvas.id = `chart-${id}`;
+    wrapper.appendChild(canvas);
+    container.appendChild(wrapper);
+
+    destroyChart(canvas.id);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const labels = Object.keys(data), values = Object.values(data);
     const total = values.reduce((a,b) => a+b, 0);
-    chartInstances[cfg.id] = new Chart(ctx, {
+    
+    chartInstances[canvas.id] = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: labels.map((l,i) => `${l} (${total>0?((values[i]/total)*100).toFixed(1):'0'}%)`),
-        datasets: [{ data: values, backgroundColor: APP_CONFIG.COLORS.chartPalette.slice(0,labels.length), borderWidth: 2, borderColor: '#fff' }]
+        labels: labels.map((l,i) => `${l} (${total > 0 ? ((values[i] / total) * 100).toFixed(1) : '0'}%)`),
+        datasets: [{ 
+          data: values, 
+          backgroundColor: APP_CONFIG.COLORS.chartPalette.slice(0, labels.length), 
+          borderWidth: 2, 
+          borderColor: '#fff' 
+        }]
       },
-      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 12 } } }, title: { display: true, text: cfg.label, font: { family: 'Sarabun', size: 16, weight: 'bold' }, color: '#1a2d4d' } } }
+      options: { 
+        responsive: true, 
+        plugins: { 
+          legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 11 } } }, 
+          title: { display: true, text: label, font: { family: 'Sarabun', size: 14, weight: 'bold' }, color: '#1a2d4d' } 
+        } 
+      }
     });
   });
 }

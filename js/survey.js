@@ -8,6 +8,7 @@
 // ====== State ======
 let currentConfig = null;
 let currentQuestions = [];
+let currentDemographics = [];
 let currentSection = 0;
 const totalSections = 6; // info + 2.1 + 2.2 + 2.3 + 2.4 + confirm
 
@@ -48,7 +49,12 @@ window.initSurvey = async function() {
     const qResp = await callAPI('getQuestions', { year: activeYear });
     if (!qResp.success) throw new Error(qResp.error || 'ไม่สามารถโหลดคำถาม');
 
+    // ดึงข้อมูลทั่วไป (Section 1)
+    const dResp = await callAPI('getDemographics', { year: activeYear });
+    if (!dResp.success) throw new Error(dResp.error || 'ไม่สามารถโหลดโครงสร้างคำถามทั่วไป');
+
     currentQuestions = qResp.data;
+    currentDemographics = dResp.data;
     renderSurvey();
   } catch (err) {
     console.error('Init error:', err);
@@ -212,9 +218,9 @@ function renderSurvey() {
   showSection(0);
 }
 
-/** Render ส่วนที่ 1: ข้อมูลทั่วไป */
+/** Render ส่วนที่ 1: ข้อมูลทั่วไป (Dynamic) */
 function renderDemographicSection() {
-  return `
+  let html = `
     <div class="card survey-section" id="section-demographic">
       <div class="card-header">
         <div class="icon icon-gold"><i class="fas fa-user"></i></div>
@@ -223,67 +229,35 @@ function renderDemographicSection() {
           <p>กรุณาเลือกข้อมูลที่ตรงกับความเป็นจริง</p>
         </div>
       </div>
-
-      <!-- 1. เพศ -->
-      <div class="form-group">
-        <label>1. เพศ <span class="required">*</span></label>
-        <div class="radio-group">
-          <label><input type="radio" name="gender" value="ชาย" required><span>ชาย</span></label>
-          <label><input type="radio" name="gender" value="หญิง"><span>หญิง</span></label>
-        </div>
-      </div>
-
-      <!-- 2. อายุ -->
-      <div class="form-group">
-        <label>2. อายุ <span class="required">*</span></label>
-        <div class="radio-group">
-          <label><input type="radio" name="age" value="ต่ำกว่า 31 ปี" required><span>ต่ำกว่า 31 ปี</span></label>
-          <label><input type="radio" name="age" value="31-35 ปี"><span>31-35 ปี</span></label>
-          <label><input type="radio" name="age" value="36-40 ปี"><span>36-40 ปี</span></label>
-          <label><input type="radio" name="age" value="41-45 ปี"><span>41-45 ปี</span></label>
-          <label><input type="radio" name="age" value="46-50 ปี"><span>46-50 ปี</span></label>
-          <label><input type="radio" name="age" value="51-55 ปี"><span>51-55 ปี</span></label>
-          <label><input type="radio" name="age" value="56-60 ปี"><span>56-60 ปี</span></label>
-        </div>
-      </div>
-
-      <!-- 3. อายุราชการ -->
-      <div class="form-group">
-        <label>3. อายุราชการ <span class="required">*</span></label>
-        <div class="radio-group">
-          <label><input type="radio" name="experience" value="ต่ำกว่า 6 ปี" required><span>ต่ำกว่า 6 ปี</span></label>
-          <label><input type="radio" name="experience" value="6-10 ปี"><span>6-10 ปี</span></label>
-          <label><input type="radio" name="experience" value="11-15 ปี"><span>11-15 ปี</span></label>
-          <label><input type="radio" name="experience" value="16-20 ปี"><span>16-20 ปี</span></label>
-          <label><input type="radio" name="experience" value="21-25 ปี"><span>21-25 ปี</span></label>
-          <label><input type="radio" name="experience" value="มากกว่า 25 ปีขึ้นไป"><span>มากกว่า 25 ปีขึ้นไป</span></label>
-        </div>
-      </div>
-
-      <!-- 4. วุฒิการศึกษา -->
-      <div class="form-group">
-        <label>4. วุฒิการศึกษาขั้นสูงสุด <span class="required">*</span></label>
-        <div class="radio-group">
-          <label><input type="radio" name="education" value="ต่ำกว่าปริญญาตรี" required><span>ต่ำกว่าปริญญาตรี</span></label>
-          <label><input type="radio" name="education" value="ปริญญาตรี"><span>ปริญญาตรี</span></label>
-          <label><input type="radio" name="education" value="ปริญญาโท"><span>ปริญญาโท</span></label>
-          <label><input type="radio" name="education" value="ปริญญาเอก"><span>ปริญญาเอก</span></label>
-        </div>
-      </div>
-
-      <!-- 5. หน่วยงาน -->
-      <div class="form-group">
-        <label>5. หน่วยงาน <span class="required">*</span></label>
-        <input type="text" name="department" class="form-input" placeholder="ระบุหน่วยงาน" required>
-      </div>
-
-      <!-- 6. ตำแหน่ง / อื่นๆ -->
-      <div class="form-group">
-        <label>6. ตำแหน่ง</label>
-        <input type="text" name="position" class="form-input" placeholder="ระบุตำแหน่ง (ถ้ามี)">
-      </div>
-    </div>
   `;
+
+  currentDemographics.forEach((f, idx) => {
+    html += `<div class="form-group"><label>${idx + 1}. ${f.label}${f.required ? ' <span class="required">*</span>' : ''}</label>`;
+    
+    if (f.type === 'text') {
+      html += `<input type="text" name="${f.id}" class="form-input" placeholder="กรอกข้อมูล..." ${f.required ? 'required' : ''}>`;
+    } else if (f.type === 'radio') {
+      const opts = (f.options || '').split(',').map(o => o.trim()).filter(o => o);
+      html += `<div class="radio-group">`;
+      opts.forEach((opt, oIdx) => {
+        html += `<label><input type="radio" name="${f.id}" value="${opt}" ${f.required && oIdx === 0 ? 'required' : ''}><span>${opt}</span></label>`;
+      });
+      html += `</div>`;
+    } else if (f.type === 'select') {
+      const opts = (f.options || '').split(',').map(o => o.trim()).filter(o => o);
+      html += `<select name="${f.id}" class="form-select" ${f.required ? 'required' : ''}>`;
+      html += `<option value="">-- เลือก --</option>`;
+      opts.forEach(opt => {
+        html += `<option value="${opt}">${opt}</option>`;
+      });
+      html += `</select>`;
+    }
+    
+    html += `</div>`;
+  });
+
+  html += `</div>`;
+  return html;
 }
 
 // ====== Navigation ======
@@ -373,14 +347,15 @@ async function submitSurvey() {
     // Collect all form data
     const data = {};
 
-    // Demographics
-    const demoFields = ['gender', 'age', 'experience', 'education'];
-    demoFields.forEach(field => {
-      const checked = document.querySelector(`input[name="${field}"]:checked`);
-      data[field] = checked ? checked.value : '';
+    // Collected dynamic demographics
+    currentDemographics.forEach(f => {
+      if (f.type === 'text' || f.type === 'select') {
+        data[f.id] = document.querySelector(`[name="${f.id}"]`)?.value.trim() || '';
+      } else if (f.type === 'radio') {
+        const checked = document.querySelector(`input[name="${f.id}"]:checked`);
+        data[f.id] = checked ? checked.value : '';
+      }
     });
-    data.department = document.querySelector('input[name="department"]')?.value || '';
-    data.position = document.querySelector('input[name="position"]')?.value || '';
 
     // Rating & text questions
     currentQuestions.forEach(q => {

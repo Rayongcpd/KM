@@ -59,6 +59,25 @@ window.initAdmin = async function() {
   document.getElementById('btnExportResponses')?.addEventListener('click', exportResponses);
   document.getElementById('btnClearResponses')?.addEventListener('click', clearResponses);
 
+  // Demographics buttons
+  document.getElementById('btnAddDemoField')?.addEventListener('click', () => {
+    document.getElementById('demoModalTitle').textContent = 'เพิ่มฟิลด์ข้อมูลทั่วไป';
+    document.getElementById('inputDLabel').value = '';
+    document.getElementById('inputDId').value = '';
+    document.getElementById('inputDId').disabled = false;
+    document.getElementById('inputDType').value = 'radio';
+    document.getElementById('inputDOptions').value = '';
+    document.getElementById('inputDRequired').checked = true;
+    document.getElementById('inputDOrder').value = (demographicData.length + 1) * 10;
+    document.getElementById('inputDEditId').value = '';
+    document.getElementById('demoOptionsGroup').style.display = 'block';
+    openModal('demographicModal');
+  });
+  document.getElementById('btnSaveDemoField')?.addEventListener('click', saveDemographicField);
+  document.getElementById('inputDType')?.addEventListener('change', (e) => {
+    document.getElementById('demoOptionsGroup').style.display = (e.target.value === 'text') ? 'none' : 'block';
+  });
+
   // Auto-login if token exists
   if (adminToken) {
     showAdminPanel();
@@ -128,7 +147,7 @@ function renderYearsList() {
 }
 
 function populateYearSelects() {
-  ['qYearSelect','rYearSelect'].forEach(id => {
+  ['qYearSelect','rYearSelect','dYearSelect'].forEach(id => {
     const sel = document.getElementById(id);
     if (!sel) return;
     sel.innerHTML = '';
@@ -141,8 +160,10 @@ function populateYearSelects() {
   });
   document.getElementById('qYearSelect')?.addEventListener('change', () => loadQuestions());
   document.getElementById('rYearSelect')?.addEventListener('change', () => loadResponseStats());
+  document.getElementById('dYearSelect')?.addEventListener('change', () => loadDemographics());
   if (document.getElementById('qYearSelect')?.value) loadQuestions();
   if (document.getElementById('rYearSelect')?.value) loadResponseStats();
+  if (document.getElementById('dYearSelect')?.value) loadDemographics();
 }
 
 function editYear(id) {
@@ -277,6 +298,90 @@ async function deleteQuestion(id) {
     const r = await callAPI('deleteQuestion', { year, questionId: id, token: adminToken }, 'POST');
     showLoading(false);
     if (r.success) { await loadQuestions(); showToast('ลบสำเร็จ', 'success'); }
+    else showToast(r.error, 'error');
+  } catch (e) { showLoading(false); showToast(e.message, 'error'); }
+}
+
+// ====== Demographics ======
+let demographicData = [];
+
+async function loadDemographics() {
+  const year = document.getElementById('dYearSelect')?.value;
+  if (!year) return;
+  try {
+    const r = await callAPI('getDemographics', { year });
+    if (!r.success) throw new Error(r.error);
+    demographicData = r.data || [];
+    renderDemographicsList();
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+function renderDemographicsList() {
+  const el = document.getElementById('demoFieldsListContainer');
+  if (!demographicData.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-user-cog"></i><p>ไม่มีฟิลด์ข้อมูลทั่วไป</p></div>'; return; }
+  
+  let h = '';
+  demographicData.forEach((f) => {
+    h += `<div class="question-item">
+      <div class="q-number">${f.order}</div>
+      <div class="q-text"><strong>${f.label}</strong> (ID: ${f.id})</div>
+      <div class="q-type">${f.type}${f.required ? ' <span style="color:var(--danger)">*</span>' : ''}</div>
+      <div class="q-actions">
+        <button title="แก้ไข" onclick="editDemoField('${f.id}')"><i class="fas fa-edit"></i></button>
+        <button title="ลบ" onclick="deleteDemoField('${f.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = h;
+}
+
+function editDemoField(id) {
+  const f = demographicData.find(v => v.id === id);
+  if (!f) return;
+  document.getElementById('demoModalTitle').textContent = 'แก้ไขฟิลด์ข้อมูลทั่วไป';
+  document.getElementById('inputDLabel').value = f.label;
+  document.getElementById('inputDId').value = f.id;
+  document.getElementById('inputDId').disabled = true; // ห้ามแก้ ID
+  document.getElementById('inputDType').value = f.type;
+  document.getElementById('inputDOptions').value = f.options;
+  document.getElementById('inputDRequired').checked = f.required;
+  document.getElementById('inputDOrder').value = f.order;
+  document.getElementById('inputDEditId').value = f.id;
+  document.getElementById('demoOptionsGroup').style.display = (f.type === 'text') ? 'none' : 'block';
+  openModal('demographicModal');
+}
+
+async function saveDemographicField() {
+  const year = document.getElementById('dYearSelect')?.value;
+  const label = document.getElementById('inputDLabel').value.trim();
+  const fieldId = document.getElementById('inputDId').value.trim();
+  const type = document.getElementById('inputDType').value;
+  const options = document.getElementById('inputDOptions').value.trim();
+  const required = document.getElementById('inputDRequired').checked;
+  const order = parseInt(document.getElementById('inputDOrder').value) || 0;
+  const editId = document.getElementById('inputDEditId').value;
+
+  if (!label || !fieldId) { showToast('กรุณากรอกข้อมูลให้ครบ', 'warning'); return; }
+
+  showLoading(true);
+  try {
+    const r = await callAPI('saveDemographicField', { 
+      year, fieldId, label, type, options, required, order, editId, token: adminToken 
+    }, 'POST');
+    showLoading(false);
+    if (r.success) { closeModal('demographicModal'); await loadDemographics(); showToast('บันทึกสำเร็จ', 'success'); }
+    else showToast(r.error, 'error');
+  } catch (e) { showLoading(false); showToast(e.message, 'error'); }
+}
+
+async function deleteDemoField(id) {
+  if (!confirm('ต้องการลบฟิลด์ข้อมูลทั่วไปนี้หรือไม่? ข้อมูลการตอบที่เคยบันทึกไว้ในหัวข้อนี้อาจไม่แสดงผล')) return;
+  const year = document.getElementById('dYearSelect')?.value;
+  showLoading(true);
+  try {
+    const r = await callAPI('deleteDemographicField', { year, fieldId: id, token: adminToken }, 'POST');
+    showLoading(false);
+    if (r.success) { await loadDemographics(); showToast('ลบสำเร็จ', 'success'); }
     else showToast(r.error, 'error');
   } catch (e) { showLoading(false); showToast(e.message, 'error'); }
 }

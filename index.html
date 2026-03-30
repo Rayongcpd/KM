@@ -119,13 +119,8 @@
             <p>สัดส่วนเพศ, ช่วงอายุ, วุฒิการศึกษา</p>
           </div>
         </div>
-        <div class="chart-row" id="demographicCharts">
-          <div class="chart-container"><canvas id="chartGender"></canvas></div>
-          <div class="chart-container"><canvas id="chartAge"></canvas></div>
-        </div>
-        <div class="chart-row">
-          <div class="chart-container"><canvas id="chartEducation"></canvas></div>
-          <div class="chart-container"><canvas id="chartExperience"></canvas></div>
+        <div class="chart-row" id="demographicChartsContainer">
+          <!-- กราฟข้อมูลทั่วไปจะถูก render ที่นี่แบบ dynamic -->
         </div>
       </div>
 
@@ -180,6 +175,7 @@
         <!-- Admin Tabs -->
         <div class="admin-tabs" id="adminTabs">
           <button class="admin-tab active" data-tab="tab-years"><i class="fas fa-calendar"></i> ปีงบประมาณ</button>
+          <button class="admin-tab" data-tab="tab-demographics"><i class="fas fa-user-edit"></i> ข้อมูลทั่วไป</button>
           <button class="admin-tab" data-tab="tab-questions"><i class="fas fa-list-ol"></i> จัดการคำถาม</button>
           <button class="admin-tab" data-tab="tab-responses"><i class="fas fa-database"></i> ข้อมูลตอบกลับ</button>
           <button class="admin-tab" data-tab="tab-settings"><i class="fas fa-cog"></i> ตั้งค่า</button>
@@ -196,6 +192,24 @@
               <button class="btn btn-primary btn-sm" id="btnAddYear"><i class="fas fa-plus"></i> เพิ่มปีงบประมาณ</button>
             </div>
             <div id="yearsListContainer"><div class="empty-state"><i class="fas fa-calendar"></i><p>กำลังโหลด...</p></div></div>
+          </div>
+        </div>
+
+        <!-- Tab: Demographics Management -->
+        <div class="tab-content" id="tab-demographics">
+          <div class="card">
+            <div class="card-header">
+              <div class="icon icon-gold"><i class="fas fa-user-edit"></i></div>
+              <div><h2>จัดการข้อมูลทั่วไป</h2><p>ส่วนที่ 1: เพศ, อายุ, หน่วยงาน ฯลฯ</p></div>
+            </div>
+            <div class="year-selector" style="margin-bottom:16px;">
+              <label for="dYearSelect"><i class="fas fa-calendar-alt"></i> ปี:</label>
+              <select id="dYearSelect"></select>
+            </div>
+            <div class="btn-group" style="margin-top:0; margin-bottom:20px;">
+              <button class="btn btn-primary btn-sm" id="btnAddDemoField"><i class="fas fa-plus"></i> เพิ่มฟิลด์</button>
+            </div>
+            <div id="demoFieldsListContainer"><div class="empty-state"><i class="fas fa-user-cog"></i><p>เลือกปีงบประมาณ</p></div></div>
           </div>
         </div>
 
@@ -314,6 +328,50 @@
       <div class="modal-footer">
         <button class="btn btn-outline btn-sm" onclick="closeModal('questionModal')">ยกเลิก</button>
         <button class="btn btn-primary btn-sm" id="btnSaveQuestion"><i class="fas fa-save"></i> บันทึก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Add/Edit Demographic Field -->
+  <div class="modal-overlay" id="demographicModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="demoModalTitle">เพิ่มฟิลด์ข้อมูลทั่วไป</h3>
+        <button class="modal-close" onclick="closeModal('demographicModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>ชื่อฟิลด์ (Label) <span class="required">*</span></label>
+          <input type="text" id="inputDLabel" class="form-input" placeholder="เช่น เพศ, อายุ, หน่วยงาน...">
+        </div>
+        <div class="form-group">
+          <label>รหัสฟิลด์ (ID/Key) <span class="required">*</span></label>
+          <input type="text" id="inputDId" class="form-input" placeholder="เช่น gender, age, dept (อังกฤษเท่านั้น)">
+        </div>
+        <div class="form-group">
+          <label>ประเภท</label>
+          <select id="inputDType" class="form-select">
+            <option value="radio">ตัวเลือก (Radio)</option>
+            <option value="text">ข้อความ (Text Input)</option>
+            <option value="select">รายการเลือก (Dropdown)</option>
+          </select>
+        </div>
+        <div class="form-group" id="demoOptionsGroup">
+          <label>ตัวเลือก (Options)</label>
+          <input type="text" id="inputDOptions" class="form-input" placeholder="คั่นด้วยเครื่องหมายจุลภาค เช่น ชาย,หญิง">
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="inputDRequired"> จำเป็นต้องกรอก (Required)</label>
+        </div>
+        <div class="form-group">
+          <label>ลำดับ (Order)</label>
+          <input type="number" id="inputDOrder" class="form-input" value="1">
+        </div>
+        <input type="hidden" id="inputDEditId">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('demographicModal')">ยกเลิก</button>
+        <button class="btn btn-primary btn-sm" id="btnSaveDemoField"><i class="fas fa-save"></i> บันทึก</button>
       </div>
     </div>
   </div>
